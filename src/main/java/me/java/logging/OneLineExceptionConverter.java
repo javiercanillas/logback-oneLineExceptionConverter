@@ -12,10 +12,9 @@ import ch.qos.logback.core.CoreConstants;
 public class OneLineExceptionConverter extends ThrowableProxyConverter {
 
     private int lengthOption;
-    private static final String MOCK_LINE_SEPARATOR = "|";
+    private static final String MOCK_LINE_SEPARATOR = "\\n\\r";
 
     public void start() {
-
         String lengthStr = getFirstOption();
 
         if (lengthStr == null) {
@@ -52,16 +51,16 @@ public class OneLineExceptionConverter extends ThrowableProxyConverter {
         IThrowableProxy currentTp = tp;
         String currentPrefix = prefix;
         do {
-            subjoinFirstLine(sb, currentPrefix, indent, tp);
+            subjoinFirstLine(sb, currentPrefix, indent, currentTp);
             sb.append(MOCK_LINE_SEPARATOR);
-            subjoinSTEPArray(sb, indent, tp);
-            IThrowableProxy[] suppressed = tp.getSuppressed();
+            subjoinSTEPArray(sb, indent, currentTp);
+            IThrowableProxy[] suppressed = currentTp.getSuppressed();
             if (suppressed != null) {
                 for (IThrowableProxy current : suppressed) {
                     nonRecursiveAppend(sb, CoreConstants.SUPPRESSED, indent + ThrowableProxyUtil.SUPPRESSED_EXCEPTION_INDENT, current);
                 }
             }
-            currentTp = tp.getCause();
+            currentTp = currentTp.getCause();
             currentPrefix = CoreConstants.CAUSED_BY;
         } while (currentTp != null);
     }
@@ -98,7 +97,7 @@ public class OneLineExceptionConverter extends ThrowableProxyConverter {
 
         if (commonFrames > 0 && unrestrictedPrinting) {
             ThrowableProxyUtil.indent(buf, indent);
-            buf.append("... ").append(tp.getCommonFrames()).append(" common frames omitted").append(CoreConstants.LINE_SEPARATOR);
+            buf.append("... ").append(tp.getCommonFrames()).append(" common frames omitted").append(MOCK_LINE_SEPARATOR);
         }
     }
 }

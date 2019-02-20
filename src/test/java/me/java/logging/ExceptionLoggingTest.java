@@ -13,6 +13,9 @@ public class ExceptionLoggingTest {
 
     @Test
     public void testLoggingException() {
-        LOGGER.error("ExpectedError", new RuntimeException("This is a test"));
+        LOGGER.info("Here I come");
+        RuntimeException e = new RuntimeException("This is a test cause exception");
+        LOGGER.error("ExpectedError", new RuntimeException("This is a test", e));
+        LOGGER.info("Did you see it?");
     }
 }
